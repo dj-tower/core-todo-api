@@ -1,4 +1,5 @@
 ﻿using Microsoft.AspNetCore.Mvc;
+using Microsoft.EntityFrameworkCore;
 using System;
 using System.Collections.Generic;
 using System.Linq;
@@ -23,5 +24,40 @@ namespace vue_core_todo.Controllers {
 
             return item.Id;
         }
+    
+        [HttpGet]
+        public async Task<IEnumerable<ChecklistItem>> Get() {
+            var items = await _dbContext.ChecklistItems.ToListAsync();
+
+            return items;
+        }
+        
+        [HttpGet("{id}")]
+        public async Task<ChecklistItem> Get(int id) {
+            var item = await _dbContext.ChecklistItems.FirstOrDefaultAsync(item => item.Id == id);
+
+            return item;
+        }
+
+        [HttpPut]
+        public async Task<bool> Update(int id, ChecklistItem item) {
+            var existingItem = await _dbContext.ChecklistItems.FirstOrDefaultAsync(i => i.Id == id);
+
+            existingItem.Text = item.Text;
+
+            var result = await _dbContext.SaveChangesAsync();
+
+            return result > 0;
+        }
+
+        [HttpDelete("{id}")]
+        public async Task<bool> Delete(int id) {
+            var item = await _dbContext.ChecklistItems.FirstOrDefaultAsync(item => item.Id == id);
+            _dbContext.ChecklistItems.Remove(item);
+            var result = await _dbContext.SaveChangesAsync();
+
+            return result > 0;
+        }
+    
     }
 }
