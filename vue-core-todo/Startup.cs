@@ -36,6 +36,13 @@ namespace vue_core_todo {
 
             app.UseHttpsRedirection();
 
+            app.UseCors(builder => {
+                builder
+                    .WithOrigins("http://localhost:8080")
+                    .AllowAnyMethod()
+                    .AllowAnyHeader();
+            });
+
             app.UseRouting();
 
             app.UseAuthorization();
